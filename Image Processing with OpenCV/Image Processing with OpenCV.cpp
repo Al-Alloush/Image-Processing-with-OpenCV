@@ -10,8 +10,8 @@
   allow you to easily visualize and interact with your images. like(imshow(),imread(), ... ),
   and can react to mouse or key events */
 #include <opencv2/highgui.hpp>
-
-//#include <opencv2/imgproc.hpp>
+// for drow chaps, mithod likes (circle, )
+#include <opencv2/imgproc.hpp>
 
 //to don't add the namespace in code (remove std::)
 using namespace std;
@@ -130,7 +130,7 @@ The flags are used to determine which button was pressed when the mouse event wa
 Finally the last perimeter is used to send an extra parameter to the function in the form of a pointer to any object.
 */
 void onMouse(int event, int x, int y, int flags, void* param) {
-
+	//image location in memory
 	Mat *im = reinterpret_cast<Mat*>(param);
 
 	//get mouse location
@@ -154,10 +154,25 @@ void onMouse(int event, int x, int y, int flags, void* param) {
 		cout << "EVENT_LBUTTON DBLCLK at (" << x << "," << y << ") value is : " <<
 			static_cast<int>(im->at<uchar>(Point(x, y))) << endl;
 		break;
+	case EVENT_RBUTTONDOWN:
+
+		//drow the circal shape
+		circle(*im, Point(x, y), 65, 0, 3);
+
+		//write text in image
+		string message = "this my dog";
+		int msgLingth = message.length();//get string length
+		int txt_X_Center = x - msgLingth * 10;
+		putText(*im, message ,Point(txt_X_Center, y), FONT_HERSHEY_PLAIN, 2.5, 255, 2);
+		//display in the same window name
+		imshow("Oregnal Dog Image", *im);
+
+		break;
 	
 	}
 
 }
+
 void highguiEvents() {
 
 	//image as a three channel color
@@ -172,11 +187,7 @@ void highguiEvents() {
 	namedWindow("Oregnal Dog Image");
 	//an image made up of integers designated as cv16u for 16 bit unsigned integers or cv32s for a 32 bit sine integers.
 	imshow("Oregnal Dog Image", image);
-
 	setMouseCallback("Oregnal Dog Image", onMouse, reinterpret_cast<void*>(&image));
-
-
-
 	waitKey(0);
 }
 
