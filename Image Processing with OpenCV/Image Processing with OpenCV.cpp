@@ -173,7 +173,7 @@ void onMouse(int event, int x, int y, int flags, void* param) {
 
 }
 
-void highguiEvents() {
+void mouseEvents() {
 
 	//image as a three channel color
 	Mat image = imread("images/Dog.jpg");
