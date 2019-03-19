@@ -22,6 +22,7 @@ using namespace cv;
 void openImage();
 void mouseEvents();
 void cvMatStractuer();
+void DefiningRegionsOfInterest();
 
 int main()
 {
@@ -30,6 +31,7 @@ int main()
 		cout << "1 - Open and save a Image\n";
 		cout << "2 - Mouse Event\n";
 		cout << "3 - cvMat Stractuer\n";
+		cout << "4 - Defining Regions Of Interest like: Logo\n";
 
 		cout << "\nChoice app One: "; 
 		cin >> num;
@@ -38,10 +40,13 @@ int main()
 		case 1: openImage(); break;
 		case 2: mouseEvents();  break;
 		case 3:cvMatStractuer(); break;
+		case 4: DefiningRegionsOfInterest(); break;
 
 		}
 
 	} while (num == 0);
+
+	return 0;
 }
 
 void openImage() {
@@ -186,7 +191,6 @@ void mouseEvents() {
 	waitKey(0);
 }
 
-
 void cvMatStractuer() {
 
 
@@ -283,6 +287,59 @@ void cvMatStractuer() {
 
 
 	waitKey(0);
+}
+
+
+void DefiningRegionsOfInterest() {
+
+
+	// define an image window
+	namedWindow("Image");
+
+	// read the image 
+	Mat image = imread("images/dogBlack.jpg");
+
+	// read the logo
+	Mat logo = imread("images/smalllogo.png");
+
+	// define image ROI at image bottom-right
+	Mat imageROI(image,
+				 Rect(image.cols - logo.cols, //ROI coordinates
+				 image.rows - logo.rows,
+				 logo.cols, logo.rows));// ROI size
+
+	cout << "image cols X rows : ( " << image.cols << " X " << image.rows << " ) image.cols - logo.cols : "<< image.cols - logo.cols <<" ." << endl;
+	cout << "logo cols X rows : ( " << logo.cols << " X " << logo.rows << " ) image.rows - logo.rows : " << image.rows - logo.rows << " ." << endl;
+
+
+
+	// insert logo
+	logo.copyTo(imageROI);
+
+	imshow("Image", image); // show the image
+	waitKey(0); // wait for a key pressed
+
+	// re-read the original image
+	image = imread("images/dogBlack.jpg");
+
+	// define image ROI at image bottom-right
+	//imageROI = image(Rect(image.cols - logo.cols, image.rows - logo.rows,logo.cols, logo.rows));
+
+	// or using ranges: a range is a continuous sequence from a start index to an end index including both
+	imageROI= image(cv::Range(image.rows-logo.rows,image.rows), 
+	                cv::Range(image.cols-logo.cols,image.cols));
+
+	//use the logo as a mask (must be gray-level)
+	/*	A mask is an 8-bit image that should be nonzero at all locations where you want an 
+		operation to be applied at the pixel locations that correspond to the zero values of the mask.*/
+	Mat mask(logo);
+
+	// insert by copying only at locations of non-zero mask
+	logo.copyTo(imageROI, mask);
+
+	imshow("Image", image); // show the image
+	waitKey(0); // wait for a key pressed
+
 }
 
 
