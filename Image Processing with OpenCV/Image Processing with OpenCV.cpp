@@ -1,4 +1,4 @@
-// Image Processing with OpenCV.cpp : This file contains the 'main' function. Program execution begins and ends there.
+﻿// Image Processing with OpenCV.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include "pch.h"
@@ -20,29 +20,25 @@ using namespace cv;
 
 
 void openImage();
-void highguiEvents();
+void mouseEvents();
+void cvMatStractuer();
 
 int main()
 {
 	int num = 9;
-
 	do {
-
-
 		cout << "1 - Open and save a Image\n";
 		cout << "2 - Mouse Event\n";
+		cout << "3 - cvMat Stractuer\n";
 
-		cout << "\nChoice app One: ";
+		cout << "\nChoice app One: "; 
 		cin >> num;
-
-
 
 		switch (num){
 		case 1: openImage(); break;
-		case 2: highguiEvents();  break;
-		case 3 :
-			//
-			break;
+		case 2: mouseEvents();  break;
+		case 3:cvMatStractuer(); break;
+
 		}
 
 	} while (num == 0);
@@ -172,7 +168,6 @@ void onMouse(int event, int x, int y, int flags, void* param) {
 	}
 
 }
-
 void mouseEvents() {
 
 	//image as a three channel color
@@ -190,4 +185,104 @@ void mouseEvents() {
 	setMouseCallback("Oregnal Dog Image", onMouse, reinterpret_cast<void*>(&image));
 	waitKey(0);
 }
+
+
+void cvMatStractuer() {
+
+
+	/*
+	CV_8U specify the type of each matrix element
+	Which corresponds to one byte pixel grayscale images .
+	The letter U  means it is unsigned.*/
+
+	// create a new image made of 240 rows and 320 columns
+	Mat image1(240, 320, CV_8U, 100);
+	// or:
+	// Mat image1(240,320,CV_8U,cv::Scalar(100));
+
+	imshow("Image", image1); // show the image
+	waitKey(0); // wait for a key pressed
+
+	// re-allocate a new image using the create method when an image has already been previously allocated.
+	// (only if size or type are different)
+	image1.create(200, 200, CV_8U);
+	imshow("Image1.create", image1); 
+	waitKey(0); 
+
+	image1 = 200;
+	imshow("=200", image1); // show the image
+	waitKey(0); // wait for a key pressed
+
+
+	imshow("Image after all", image1); // after all change show the image1
+	waitKey(0); // wait for a key pressed
+
+	// create a red color image
+	// channel order is BGR
+	Mat image2(240, 320, CV_8UC3, Scalar(0, 0, 255));
+	// or:
+	// cv::Mat image2(cv::Size(320,240),CV_8UC3);
+	// image2= cv::Scalar(0,0,255);
+
+	imshow("Image", image2); // show the image
+	waitKey(0); // wait for a key pressed
+
+	// read an image
+	Mat image3 = imread("images/dog.jpg");
+
+	// all these images point to the same data block
+	//if we change anything in image1 or image4 will change image3
+	Mat image4(image3);
+	image1 = image3;
+
+	// these images are new copies of the source image
+	image3.copyTo(image2);
+	Mat image5 = image3.clone();
+
+	// transform the image for testing
+	flip(image3, image3, 1);
+
+	flip(image1, image1, -1);//if we change anything in image1 or image4 will change image3
+
+	// check which images have been affected by the processing
+	imshow("Image3", image3);
+	imshow("Image1 same data image3", image1);
+	imshow("Image2", image2);
+	imshow("Image4 same data", image4);
+	imshow("Image5", image5);
+	waitKey(0); // wait for a key pressed
+
+	// get a gray-level image from a function
+	// create image
+	Mat ima(500, 500, CV_8U, 50);
+
+	Mat gray = ima;
+
+	imshow("Image", gray); // show the image
+	waitKey(0); // wait for a key pressed
+
+	// read the image in gray scale
+	image1 = imread("images/dog.jpg", IMREAD_GRAYSCALE );
+
+	// convert the image into a floating point image [0,1]
+	image1.convertTo(image2, CV_32F, 1 / 255.0, 0.0);
+
+	imshow("Image", image2); // show the image
+
+	// Test Matx
+	// a 3x3 matrix of double-precision
+	Matx33d matrix(3.0, 2.0, 1.0,
+		2.0, 1.0, 3.0,
+		1.0, 2.0, 3.0);
+	// a 3x1 matrix (a vector)
+	Matx31d vector(5.0, 1.0, 3.0);
+	// multiplication
+	Matx31d result = matrix * vector;
+
+	std::cout << result;
+
+
+	waitKey(0);
+}
+
 
