@@ -12,6 +12,7 @@
 #include <opencv2/highgui.hpp>
 // for drow chaps, mithod likes (circle, )
 #include <opencv2/imgproc.hpp>
+#include <random>
 
 //to don't add the namespace in code (remove std::)
 using namespace std;
@@ -23,6 +24,8 @@ void openImage();
 void mouseEvents();
 void cvMatStractuer();
 void DefiningRegionsOfInterest();
+void AccessingPixelValues();
+void SaltAndPepper(Mat image, int n);
 
 int main()
 {
@@ -32,6 +35,7 @@ int main()
 		cout << "2 - Mouse Event\n";
 		cout << "3 - cvMat Stractuer\n";
 		cout << "4 - Defining Regions Of Interest like: Logo\n";
+		cout << "5 - Accessing Pixel Values \n";
 
 		cout << "\nChoice app One: "; 
 		cin >> num;
@@ -41,6 +45,7 @@ int main()
 		case 2: mouseEvents();  break;
 		case 3:cvMatStractuer(); break;
 		case 4: DefiningRegionsOfInterest(); break;
+		case 5: AccessingPixelValues(); break;
 
 		}
 
@@ -49,6 +54,7 @@ int main()
 	return 0;
 }
 
+//1
 void openImage() {
 
 	Mat image;
@@ -124,6 +130,7 @@ void openImage() {
 	waitKey(0);
 }
 
+//2
 /*
 the first parameter is an integer that is used to specify which type of mouse event has triggered the call to the callback function.
 The other two (x , y) parameters are simply the pixel coordinates of the mouse location when the event has occurred.
@@ -191,6 +198,7 @@ void mouseEvents() {
 	waitKey(0);
 }
 
+//3
 void cvMatStractuer() {
 
 
@@ -289,7 +297,7 @@ void cvMatStractuer() {
 	waitKey(0);
 }
 
-
+//4
 void DefiningRegionsOfInterest() {
 
 
@@ -342,4 +350,67 @@ void DefiningRegionsOfInterest() {
 
 }
 
+//5
+void SaltAndPepper(Mat image, int n) {
 
+	// #include <random> to use this function 
+	default_random_engine generator;
+	uniform_int_distribution<int> randomRow(0, image.rows - 1);
+	uniform_int_distribution<int> randomCol(0, image.cols - 1);
+
+	cout << " the generator1: " << randomRow(generator) << " )" << endl;
+	cout << " the generator2: " << randomRow(generator) << " )" << endl;
+	cout << " the generator1: " << randomCol(generator) << " )" << endl;
+	cout << " the generator2: " << randomCol(generator) << " )" << endl;
+
+	int i, j;
+	for (int k = 0; k < n; k++) {
+		j = randomRow(generator);
+		i = randomCol(generator);
+
+		if (image.type() == CV_8UC1) {
+			// This line is used for the single 8 bit image
+			image.at<uchar>(j, i) = 255;
+		}
+		else if (image.type() == CV_8UC3) {
+			// the j = Row, i = Column.
+			// for 3 channel image we have defined these three lines
+			//image.at<Vec3b>(j, i)[0] = 255;
+			//image.at<Vec3b>(j, i)[1] = 255;
+			//image.at<Vec3b>(j, i)[2] = 255;
+
+			// or simple
+			image.at<Vec3b>(j, i) = Vec3b(255, 255, 255);//j = Row, i = Column
+			//add under the above pixel another point with another color
+			image.at<Vec3b>(j+1, i) = Vec3b(0, 0, 255);//j = Row, i = Column
+			image.at<Vec3b>(j+2, i+2) = Vec3b(255, 0, 0);//j = Row, i = Column
+		}
+	}
+
+}
+void AccessingPixelValues() {
+
+	Mat image = imread("images/dogBlack.jpg", 1);
+	SaltAndPepper(image, 3000);
+
+	namedWindow("Sals and peppar");
+	imshow("Sals and peppar", image);
+
+	//The extra methods there is operator which allows direct access to matrix elements
+	Mat imageC = image.clone();
+	Mat_<uchar> img(imageC);
+	img(50, 100) = 0;
+	namedWindow("Mat_<uchar> img(imageC)");
+	imshow("Mat_<uchar> img(imageC)", img);
+
+	/*	if we save the image directly we will have a pointer bug. The actual cause ranges somewhere between mild, 
+		like trying to free memory that was already freed or allocated from another heap. 
+		Not uncommon when you interop with another program. 
+		To drastically nasty like having blown the heap to pieces earlier by overflowing a heap allocated buffer.
+		for that make a copy or clone from this image*/
+	Mat output = image.clone();
+	imwrite("images/dogSals.jpg", output);
+	
+	waitKey(0);
+
+}
