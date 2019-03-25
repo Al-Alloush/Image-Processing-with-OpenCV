@@ -14,6 +14,8 @@
 #include <opencv2/imgproc.hpp>
 #include <random>
 
+#include "colorReduce.h"
+
 //to don't add the namespace in code (remove std::)
 using namespace std;
 //makes the openCV classes and functions easier to identify within your code.(remove cv::)
@@ -24,18 +26,20 @@ void openImage();
 void mouseEvents();
 void cvMatStractuer();
 void DefiningRegionsOfInterest();
-void AccessingPixelValues();
-void SaltAndPepper(Mat image, int n);
+void AccessingPixelValues(); void SaltAndPepper(Mat image, int n);
+void ScanningImageWithPointers(); void colorReduce(Mat image, int div);
 
 int main()
 {
-	int num = 9;
+	int num;
 	do {
 		cout << "1 - Open and save a Image\n";
 		cout << "2 - Mouse Event\n";
 		cout << "3 - cvMat Stractuer\n";
 		cout << "4 - Defining Regions Of Interest like: Logo\n";
 		cout << "5 - Accessing Pixel Values \n";
+		cout << "6 - Scanning an Image With Pointers \n";
+		cout << "0 - ti Exit =>\n";
 
 		cout << "\nChoice app One: "; 
 		cin >> num;
@@ -46,10 +50,11 @@ int main()
 		case 3:cvMatStractuer(); break;
 		case 4: DefiningRegionsOfInterest(); break;
 		case 5: AccessingPixelValues(); break;
+		case 6: ScanningImageWithPointers(); break;
 
 		}
 
-	} while (num == 0);
+	} while (num != 0);
 
 	return 0;
 }
@@ -414,3 +419,77 @@ void AccessingPixelValues() {
 	waitKey(0);
 
 }
+
+//6
+void ScanningImageWithPointers() {
+
+	Mat image = imread("images/dogBlack.jpg");
+	Mat result;
+
+	int num ;
+	do {
+		cout << "\ncolor Reduce function\n";
+		cout << "1 - color Reduce\n";
+		cout << "2 - color Reduce IO \n";
+		cout << "3 - CR, version uses the dereference operator\n";
+		cout << "4 - CR, version uses uses the modulo operator\n";
+		cout << "5 - CR, version uses the uses a binary mask\n";
+		cout << "6 - CR, version uses the direct pointer arithmetic with a binary mask\n";
+		cout << "7 - CR, version uses the recomputes row size each time\n";
+		cout << "8 - CR, versions optimizes the case of continuous image\n";
+		cout << "9 - CR, versions applies reshape on continuous image\n";
+		cout << "10 - CR, version processes the 3 channels inside the loop with Mat_ iterators\n";
+		cout << "11 - CR, version uses iterators on Vec3b\n";
+		cout << "12 - CR, version uses iterators with a binary mask\n";
+		cout << "13 - CR, versions uses ierators from Mat_ \n";
+		cout << "14 - CR, version uses the at method\n";
+		cout << "15 - CR, version uses Mat overloaded operators\n";
+		cout << "16 - CR, version uses a look up table\n";
+		cout << "0 - to exit => \n";
+
+		cout << "\nChoice color Reduce: ";
+		cin >> num;
+
+		switch (num) {
+		case 1: colorReduce(image, 64); break;
+		case 2: colorReduceIO(image, result, 64);  break;
+		case 3: colorReduce3(image, 64); break;
+		case 4: colorReduce4(image, 64); break;
+		case 5: colorReduce5(image, 64); break;
+		case 6: colorReduce6(image, 64); break;
+		case 7: colorReduce7(image, 64); break;
+		case 8: colorReduce8(image, 64); break;
+		case 9: colorReduce9(image, 64); break;
+		case 10: colorReduce10(image, 64); break;
+		case 11: colorReduce11(image, 64); break;
+		case 12: colorReduce12(image, 64); break;
+		case 13: colorReduce13(image, 64); break;
+		case 14: colorReduce14(image, 64); break;
+		case 15: colorReduce15(image, 64); break;
+		case 16: colorReduce16(image, 64); break;
+		}
+		if (num == 2) {
+			namedWindow("result");
+			imshow("result", result);
+			waitKey(0);
+			destroyWindow("result");
+		}
+		else {
+			if (num > 0 && num <= 16){
+				namedWindow("image");
+				imshow("image", image);
+				waitKey(0);
+				destroyWindow("image");
+			}
+			else {
+				cout << "Please choise one number from above numbers\n" << endl;
+				system("pause");
+			}
+		}
+		system("cls");
+	} while (num != 0);
+
+
+}
+
+//7
